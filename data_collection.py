@@ -4,7 +4,6 @@
 
 # Imports
 import json
-import os
 import requests
 
 base_url = "https://pokeapi.co/api/v2/pokemon-species/" # This is where the data is retrieved from.
@@ -102,6 +101,7 @@ for pokedex_number in range(1, 1026):
                 # Convert the dictionary to a string and write it to the output file
                 json_string = json.dumps(dictionary, indent=4)
 
+                # If this is the last variety of the last Pokemon, close the JSON array
                 if pokedex_number == 1025 and variety == species_data['varieties'][-1]:
 
                     outfile.write(json_string + ']')
