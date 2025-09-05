@@ -15,36 +15,30 @@ ATTRIBUTES = {"name": str,
               "hp": int,
               "attack": int,
               "defense": int,
-              "special_attack":int,
+              "special_attack": int,
               "special_defense": int,
               "speed": int
               }
 
+
 @dataclass
 class Pokemon:
-    name: str ###
-    number: int ###
-    height: int ###
-    weight: int ###
-    capture_rate: int
-    gender_ratio: int
-    growth_rate: str
-    base_experience: int
+    name: str
+    number: int
+    type1: str
+    type2: str
+    evolves_from: str
     legendary: bool
     mythical: bool
-    generation: str ###
-    type1: str ###
-    type2: str ###
     ability1: str
+    ability2: str
     hidden_ability: str
-    hp: int ###
-    attack: int ###
-    defense: int ###
+    hp: int
+    attack: int
+    defense: int
     special_attack: int
     special_defense: int
     speed: int
-    egg_group1: str
-    egg_group2: str
 
     # bool
     def comparison(self, compare_field, operator, compare_to):
@@ -64,12 +58,12 @@ with open('pokemon_data.json', 'r') as f:
     all_pokemon_from_json = json.load(f)
     for pokemon_from_json in all_pokemon_from_json:
         get = pokemon_from_json.get
-        new_pokemon = Pokemon(get('name'), get('number'), get('height'), get('weight'), get('capture_rate'), get('gender_ratio'), get('growth_rate'), get('base_experience'), get('legendary'),
-              get('mythical'), get('generation'), get('type1'), get('type2'), get('ability1'), get('hidden_ability'), get('hp'), get('attack'), get('defense'),
-              get('special_attack'), get('special_defense'), get('speed'), get('egg_group1'), get('egg_group2'))
-
+        new_pokemon = Pokemon(get('name'), get('number'), get('type1'), get('type2'), get('evolves_from'),
+                              get('legendary'), get('mythical'),
+                              get('ability1'), get('ability2'), get('hidden_ability'), get('hp'), get('attack'),
+                              get('defense'),
+                              get('special_attack'), get('special_defense'), get('speed'))
         list_of_all_pokemon.append(new_pokemon)
-
 
 print("Enter query (or q to quit): ")
 
@@ -93,7 +87,7 @@ while True:
     if is_valid_query(split_query):
         for pokemon in list_of_all_pokemon:
             if pokemon.comparison(split_query[0], split_query[1], split_query[2]):
-                query_results.append(pokemon)
+                query_results.append(pokemon.name)
         for query_result in query_results:
             print(query_result)
     else:
