@@ -1,31 +1,24 @@
 from dataclasses import dataclass
 import json
 
-list_of_all_pokemon = []
 VALID_OPERATORS = ["==", "<", ">", "!="]
-VALID_ATTRIBUTES = ["name",###
-"number", ###
-"height", ###
-"weight", ###
-"capture_rate",
-"gender_ratio",
-"growth_rate",
-"base_experience",
-"legendary",
-"mythical",
-"generation", ###
-"type1", ###
-"type2", ###
-"ability1",
-"hidden_ability",
-"hp", ###
-"attack", ###
-"defense",
-"special_attack",
-"special_defense",
-"speed",
-"egg_group1",
-"egg_group2"]
+ATTRIBUTES = {"name": str,
+              "number": int,
+              "type1": str,
+              "type2": str,
+              "evolves_from": str,
+              "legendary": bool,
+              "mythical": bool,
+              "ability1": str,
+              "ability2": str,
+              "hidden_ability": str,
+              "hp": int,
+              "attack": int,
+              "defense": int,
+              "special_attack":int,
+              "special_defense": int,
+              "speed": int
+              }
 
 @dataclass
 class Pokemon:
@@ -55,6 +48,7 @@ class Pokemon:
 
     # bool
     def comparison(self, compare_field, operator, compare_to):
+        compare_to = ATTRIBUTES[compare_field](compare_to)
         if operator == "==":
             return self.__getattribute__(compare_field) == compare_to
         if operator == ">":
@@ -65,6 +59,7 @@ class Pokemon:
             return self.__getattribute__(compare_field) != compare_to
 
 
+list_of_all_pokemon = []
 with open('pokemon_data.json', 'r') as f:
     all_pokemon_from_json = json.load(f)
     for pokemon_from_json in all_pokemon_from_json:
@@ -84,7 +79,7 @@ def is_valid_query(query):
         return False
     if query[1] not in VALID_OPERATORS:
         return False
-    if query[0] not in VALID_ATTRIBUTES:
+    if query[0] not in ATTRIBUTES.keys():
         return False
     return True
 
@@ -97,7 +92,7 @@ while True:
     split_query = raw_query.split(' ')
     if is_valid_query(split_query):
         for pokemon in list_of_all_pokemon:
-            if pokemon.comparison(split_query[0], split_query[1], int(split_query[2])):
+            if pokemon.comparison(split_query[0], split_query[1], split_query[2]):
                 query_results.append(pokemon)
         for query_result in query_results:
             print(query_result)
