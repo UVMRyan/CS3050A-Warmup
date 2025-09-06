@@ -7,6 +7,7 @@ import json
 import requests
 
 base_url = "https://pokeapi.co/api/v2/pokemon-species/" # This is where the data is retrieved from.
+hyphenated_pokemon = ['ho-oh', 'porygon-z', 'jangmo-o', 'hakamo-o', 'kommo-o']      # These Pokemon have hyphens in their name
 
 # Open the output file
 outfile = open('pokemon_data.json', 'w')
@@ -45,7 +46,19 @@ for pokedex_number in range(1, 1026):
                 dictionary = {}
                 pokemon_data = response.json()
 
-                dictionary['name'] = pokemon_data['name']
+                if pokemon_data['name'] in hyphenated_pokemon:
+
+                    dictionary['name'] = pokemon_data['name']
+
+                elif pokemon_data['name'] == 'kommo-o-totem':
+
+                    # This case is special because only one hyphen should be removed
+                    dictionary['name'] = 'kommo-o totem'
+
+                else:
+
+                    dictionary['name'] = pokemon_data['name'].replace('-', ' ')
+
                 dictionary['number'] = pokemon_data['id']
                 dictionary['height'] = pokemon_data['height']
                 dictionary['weight'] = pokemon_data['weight']
@@ -53,15 +66,21 @@ for pokedex_number in range(1, 1026):
                 # Not every Pokemon evolves from another
                 if species_data['evolves_from_species']:
 
-                    dictionary['evolves_from'] = species_data['evolves_from_species']['name'] 
+                    if species_data['evolves_from_species']['name'] in hyphenated_pokemon:
+
+                        dictionary['evolves_from'] = species_data['evolves_from_species']['name']
+
+                    else:
+
+                        dictionary['evolves_from'] = species_data['evolves_from_species']['name'].replace('-', ' ')
 
                 dictionary['capture_rate'] = species_data['capture_rate']
                 dictionary['gender_ratio'] = species_data['gender_rate']
-                dictionary['growth_rate'] = species_data['growth_rate']['name']
+                dictionary['growth_rate'] = species_data['growth_rate']['name'].replace('-', ' ')
                 dictionary['base_experience'] = pokemon_data['base_experience']
                 dictionary['legendary'] = species_data['is_legendary']
                 dictionary['mythical'] = species_data['is_mythical']
-                dictionary['generation'] = species_data['generation']['name']
+                dictionary['generation'] = species_data['generation']['name'].replace('-', ' ')
                 dictionary['type1'] = pokemon_data['types'][0]['type']['name']
                 
                 # Check if the Pokemon has a second type, some only have one
@@ -76,27 +95,35 @@ for pokedex_number in range(1, 1026):
 
                     if ability['is_hidden']:
 
-                        dictionary['hidden_ability'] = ability['ability']['name']
+                        dictionary['hidden_ability'] = ability['ability']['name'].replace('-', ' ')
 
                     elif second:
 
-                        dictionary['ability2'] = ability['ability']['name']
+                        dictionary['ability2'] = ability['ability']['name'].replace('-', ' ')
                         
                     else:
 
-                        dictionary['ability1'] = ability['ability']['name']
+                        if ability['ability']['name'] == 'well-baked-body':
+
+                            # This case is special because only one hyphen should be removed
+                            dictionary['ability1'] = 'well-baked body'
+
+                        else:
+
+                            dictionary['ability1'] = ability['ability']['name'].replace('-', ' ')
+
                         second = True
 
                 for stat in pokemon_data['stats']:
 
-                    dictionary[stat['stat']['name']] = stat['base_stat']
+                    dictionary[stat['stat']['name'].replace('-', ' ')] = stat['base_stat']
 
-                dictionary['egg_group1'] = species_data['egg_groups'][0]['name']
+                dictionary['egg_group1'] = species_data['egg_groups'][0]['name'].replace('-', ' ')
 
                 # Just like types, some Pokemon have one egg group while others have two
                 if len(species_data['egg_groups']) > 1:
 
-                    dictionary['egg_group2'] = species_data['egg_groups'][1]['name']
+                    dictionary['egg_group2'] = species_data['egg_groups'][1]['name'].replace('-', ' ')
 
                 # Convert the dictionary to a string and write it to the output file
                 json_string = json.dumps(dictionary, indent=4)
