@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import json
+from pyparsing import *
 
 VALID_OPERATORS = ["==", "<", ">", "!="]
 ATTRIBUTES = {"name": str,
@@ -67,7 +68,6 @@ with open('pokemon_data.json', 'r') as f:
 
 print("Enter query (or q to quit): ")
 
-
 def is_valid_query(query):
     if len(query) != 3:
         return False
@@ -76,7 +76,6 @@ def is_valid_query(query):
     if query[0] not in ATTRIBUTES.keys():
         return False
     return True
-
 
 while True:
     query_results = []
