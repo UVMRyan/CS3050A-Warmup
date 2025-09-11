@@ -1,4 +1,5 @@
 # Admin file 
+# DO NOT RUN FIRESTORE HAS DATA WORKING ON DELETION
 import json
 import firebase_admin
 from firebase_admin import firestore
