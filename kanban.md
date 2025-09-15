@@ -1,7 +1,6 @@
 Priority scale most important to least: 1, 2, 3
 
 # Todo:
-* Create cloud firestore and get our json data to it (1)
 * Trim fields of Pokemon class (1)
 * Adjust json construction to account for nullable fields (1)
 * Organize the structure of the query program. Add functions etc. (2)
@@ -13,3 +12,4 @@ Priority scale most important to least: 1, 2, 3
 # Doing:
 
 # Done:
+* Create cloud firestore and get our json data to it
