@@ -1,4 +1,5 @@
 # Admin file 
+# TODO: Optimize so deletion times are shorter
 import json
 import firebase_admin
 from firebase_admin import firestore
