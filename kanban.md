@@ -11,6 +11,7 @@ Priority scale most important to least: 1, 2, 3
 * Optimize admin.py (3)
 
 # Doing:
+Adjust query_data.py to utilize a pyparser grammar (Matt)
 
 # Done:
 * Create cloud firestore and get our json data to it
