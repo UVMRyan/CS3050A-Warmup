@@ -30,7 +30,12 @@ compound_operator = oneOf("and or")
 field_name = Word(alphanums)
 true_keyword = CaselessKeyword("True")
 false_keyword = CaselessKeyword("False")
-field_value = (pyparsing_common.number | Word(alphanums) | true_keyword | false_keyword)
+field_value = (pyparsing_common.number |
+                Combine(OneOrMore(Word(alphanums)),
+                joinString=" ",
+                adjacent=False) |
+                true_keyword |
+                false_keyword)
 
 query_grammar = field_name("field_name1") + \
                 operator("operator1") + \
