@@ -1,35 +1,48 @@
 # Admin file 
-# TODO: Optimize
 import json
+import sys
 import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
 
-# Initializing the database and connection to firestore
+# Check the length of command-line input, if length != print help statement
+if len(sys.argv) != 2:
+    print("Input: admin.py pokemon_data.json")
+    sys.exit(1)
+
+# Get the filename
+json_file = sys.argv[1]
+
+# Initialize Firestore connection
 cred = credentials.Certificate('cs3050-warmup-891d7-firebase-adminsdk-fbsvc-48b3b532ba.json')
 firebase_admin.initialize_app(cred)
 firestore_conn = firestore.client()
 
-# Read data from the json file
-with open('pokemon_data.json', 'r') as pokemonFile:
-    pokemonData = json.load(pokemonFile)
+# Read data from the given JSON file
+with open(json_file, 'r') as f:
+    pokemon_data = json.load(f)
 
-# Start new collection in firestore 
-collectionReference = firestore_conn.collection("pokemon")
+# Initialize collection
+collection_name = "pokemon"
+collection_ref = firestore_conn.collection(collection_name)
 
 # Check if the collection is populated
-docCheck = collectionReference.limit(1).get()
+doc_check = collection_ref.limit(1).get()
+docs = collection_ref.stream()
 
-# Docs is every document in the firestore
-docs = collectionReference.stream()
-
-# If the collection is populated delete everything
-if len(list(docCheck)) >= 1:
+# If the collection contains documents delete all
+if len(list(doc_check)) >= 1:
+    print("Deleting all documents in the collection...")
     for doc in docs:
         doc.reference.delete()
+print("All documents deleted from the firestore.")
 
-# Otherwise populate the pokemon collection
-for pokemon in pokemonData:
-    docID = str(pokemon["number"])
-    collectionReference.document(docID).set(pokemon)
-
+# Once deletion from collection is complete upload documents into collection
+print("Adding pokemon to the firestore...")
+for pokemon in pokemon_data:
+    doc_ID = str(pokemon["number"])
+    if doc_ID:
+        collection_ref.document(doc_ID).set(pokemon)
+    else:
+        collection_ref.add(pokemon)
+print(f"Upload Complete.")
