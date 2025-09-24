@@ -18,15 +18,19 @@ firebase_admin.initialize_app(cred)
 firestore_conn = firestore.client()
 db = firestore_conn.collection("pokemon")
 
-int_fields = ['capture rate', 'number', 'special attack', 'defense', 'hp', 'base experience', 'speed', 'height', 'weight', 'attack', 'special defense']
-string_fields = ['name', 'type1', 'type2', 'ability2', 'hidden ability', 'ability1', 'evolves from', 'growth rate', 'egg group1', 'egg group2', 'generation']
+int_fields = ['capture rate', 'number', 'special attack', 'defense', 'hp', 'base experience', 'speed', 'height',
+              'weight', 'attack', 'special defense']
+string_fields = ['name', 'type1', 'type2', 'ability2', 'hidden ability', 'ability1', 'evolves from', 'growth rate',
+                 'egg group1', 'egg group2', 'generation']
 bool_fields = ['legendary', 'mythical']
 
 # query grammar
 operator = oneOf("== != < > of")
 compound_operator = oneOf("and or")
 field_name = Word(alphanums)
-field_value = (pyparsing_common.number | Word(alphanums))
+true_keyword = CaselessKeyword("True")
+false_keyword = CaselessKeyword("False")
+field_value = (pyparsing_common.number | Word(alphanums) | true_keyword | false_keyword)
 
 query_grammar = field_name("field_name1") + \
                 operator("operator1") + \
@@ -38,13 +42,22 @@ query_grammar = field_name("field_name1") + \
                     field_value("field_value2"))
 
 
+# if the value is a bool, return correct bool, otherwise use the value as it was inputted (string or int)
+def normalize_to_bool_or_default(value):
+    if value == "true":
+        return True
+    if value == "false":
+        return False
+    return value
+
+
 def parse_query(query):
     parsed_query_as_dict = query_grammar.parseString(query).asDict()
     get = parsed_query_as_dict.get
-    query1 = [get("field_name1"), get("operator1"), get("field_value1")]
+    query1 = [get("field_name1"), get("operator1"), normalize_to_bool_or_default(get("field_value1"))]
     if "compound_operator" in parsed_query_as_dict.keys():
         compound = get("compound_operator")
-        query2 = [get("field_name2"), get("operator2"), get("field_value2")]
+        query2 = [get("field_name2"), get("operator2"), normalize_to_bool_or_default(get("field_value2"))]
         return [query1, compound, query2]
     return [query1]
 
@@ -127,11 +140,18 @@ def single_query(query):
         result.append(doc.get("name"))
     return result
 
-# 
+
+# TODO: help menu + initial prompt to user
+help_menu = "example help menu"
+
 print("Enter query, or press q to quit: ")
 while True:
     query_results = []
-    raw_query = input(">>> ").lstrip('>').strip()
+    raw_query = input("")
+    if raw_query == "help":
+        print(help_menu)
+    if raw_query == "q":
+        raw_query = input(">>> ").lstrip('>').strip()
     if raw_query == "q" or raw_query == "Q":
         break
 
