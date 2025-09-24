@@ -20,7 +20,7 @@ db = firestore_conn.collection("pokemon")
 
 
 # query grammar
-operator = oneOf("== != < >")
+operator = oneOf("== != < > of")
 compound_operator = oneOf("and or")
 field_name = Word(alphanums)
 field_value = (pyparsing_common.number | Word(alphanums))
@@ -59,20 +59,20 @@ def compound_query(query1, compound, query2):
     field2, op2, value2 = query2
     if compound == "and":
         result_query_1 = db.where(filter=FieldFilter(field1, op1, value1)).stream()
-        for doc in result_query_1:
-            doc_data = doc.to_dict()
+        for pokemon in result_query_1:
+            pokemon_data_dict = pokemon.to_dict()
             if op2 == "==":
-                if doc_data.get(field2) == value2:
-                    final_result.append(doc_data.get("name"))
+                if pokemon_data_dict.get(field2) == value2:
+                    final_result.append(pokemon_data_dict.get("name"))
             if op2 == "!=":
-                if doc_data.get(field2) != value2:
-                    final_result.append(doc_data.get("name"))
+                if pokemon_data_dict.get(field2) != value2:
+                    final_result.append(pokemon_data_dict.get("name"))
             if op2 == ">":
-                if doc_data.get(field2) > value2:
-                    final_result.append(doc_data.get("name"))
+                if pokemon_data_dict.get(field2) > value2:
+                    final_result.append(pokemon_data_dict.get("name"))
             if op2 == "<":
-                if doc_data.get(field2) < value2:
-                    final_result.append(doc_data.get("name"))
+                if pokemon_data_dict.get(field2) < value2:
+                    final_result.append(pokemon_data_dict.get("name"))
     if compound == "or":
         result_query_1 = single_query(query1)
         result_query_2 = single_query(query2)
@@ -88,6 +88,10 @@ def compound_query(query1, compound, query2):
 def single_query(query):
     result = []
     field, op, value = query
+    if op == "of":
+        query_result = db.where(filter=FieldFilter("name", "==", value)).stream()
+        for doc in query_result:
+            return doc.get(field)
     query_result = db.where(filter=FieldFilter(field, op, value)).stream()
     for doc in query_result:
         result.append(doc.get("name"))
