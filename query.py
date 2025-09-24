@@ -74,6 +74,8 @@ def compound_query(query1, compound, query2):
         return ["Error: Field '" + field1 + "' requires a boolean value not '" + str(value1) + "'"]
     if field2 in bool_fields and not isinstance(value2, bool):
         return ["Error: Field '" + field2 + "' requires a boolean value not '" + str(value2) + "'"]
+    if op1 == "of" or op2 == "of":
+        return ["Error: 'of' operator cannot be used in compound queries"]
 
     if compound == "and":
         result_query_1 = db.where(filter=FieldFilter(field1, op1, value1)).stream()
