@@ -18,32 +18,6 @@ firebase_admin.initialize_app(cred)
 firestore_conn = firestore.client()
 db = firestore_conn.collection("pokemon")
 
-data = {
-    "Name": "Charizard",
-    "number": 6,
-    "height": 17,
-    "weight": 905,
-    "evolves_from": "charmeleon",
-    "capture_rate": 45,
-    "gender_ratio": 1,
-    "growth_rate": "medium slow",
-    "base_experience": 240,
-    "legendary": False,
-    "mythical": False,
-    "generation": "generation i",
-    "type1": "fire",
-    "type2": "flying",
-    "ability1": "blaze",
-    "hidden_ability": "solar power",
-    "hp": 78,
-    "attack": 84,
-    "defense": 78,
-    "special attack": 109,
-    "special defense": 85,
-    "speed": 100,
-    "egg_group1": "monster",
-    "egg_group2": "dragon"
-}
 
 # query grammar
 operator = oneOf("== != < >")
@@ -89,16 +63,16 @@ def compound_query(query1, compound, query2):
             doc_data = doc.to_dict()
             if op2 == "==":
                 if doc_data.get(field2) == value2:
-                    final_result.append(data)
+                    final_result.append(doc_data.get("name"))
             if op2 == "!=":
                 if doc_data.get(field2) != value2:
-                    final_result.append(data)
+                    final_result.append(doc_data.get("name"))
             if op2 == ">":
                 if doc_data.get(field2) > value2:
-                    final_result.append(data)
+                    final_result.append(doc_data.get("name"))
             if op2 == "<":
                 if doc_data.get(field2) < value2:
-                    final_result.append(data)
+                    final_result.append(doc_data.get("name"))
     if compound == "or":
         result_query_1 = single_query(query1)
         result_query_2 = single_query(query2)
