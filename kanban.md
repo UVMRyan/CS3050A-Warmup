@@ -1,17 +1,18 @@
 Priority scale most important to least: 1, 2, 3
 
 # Todo:
-* Trim fields of Pokemon class (1)
-* Adjust query_data.py to utilize a pyparser grammar (1)
-* Adjust json construction to account for nullable fields (1)
-* Organize the structure of the query program. Add functions etc. (2)
-* Query error handing (2)
-* Compound query handling (2)
-* Clean output (3)
-* Optimize admin.py (3)
+* Query multi-word functionality (1)
+* Query bool functionality (1)
+* Query error handing (1)
+* Query help menu (2)
+* Clean output (2)
 
 # Doing:
-Adjust query_data.py to utilize a pyparser grammar (Matt)
+* Presentation (1)
 
 # Done:
+* Trim fields of Pokemon class (1)
 * Create cloud firestore and get our json data to it
+* Compound query handling (2)
+* Organize the structure of the query program. Add functions etc. (2)
+* Adjust query.py to utilize a pyparser grammar (1)
