@@ -127,12 +127,12 @@ def single_query(query):
         result.append(doc.get("name"))
     return result
 
-
-print("enter query, or press q to quit: ")
+# 
+print("Enter query, or press q to quit: ")
 while True:
     query_results = []
-    raw_query = input("")
-    if raw_query == "q":
+    raw_query = input(">>> ").lstrip('>').strip()
+    if raw_query == "q" or raw_query == "Q":
         break
 
     results = run_query(raw_query)
@@ -142,8 +142,6 @@ while True:
     elif results[0].startswith("Error"):
         print(results[0])
     else:
-        print('Successful query. Results:')
-        for result in results:
-            print(result)
+        print(", ".join(str(r) for r in results))
 
-    print("enter query, or press q to quit: ")
+    print("Enter query, or press q to quit: ")
