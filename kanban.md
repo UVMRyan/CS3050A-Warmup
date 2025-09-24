@@ -1,14 +1,14 @@
 Priority scale most important to least: 1, 2, 3
 
 # Todo:
-* Query multi-word functionality (1)
-* Query bool functionality (1)
-* Query error handing (1)
-* Query help menu (2)
-* Clean output (2)
 
 # Doing:
-* Presentation (1)
+* Query multi-word functionality (1) Liam
+* Query bool functionality (1) Jake
+* Presentation (1) Matt / All
+* Query input validation (1) Ryan
+* Query help menu (2) Liam
+* Clean output (2) Matt
 
 # Done:
 * Trim fields of Pokemon class (1)
