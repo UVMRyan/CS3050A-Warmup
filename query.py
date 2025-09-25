@@ -56,6 +56,7 @@ def normalize_to_bool_or_default(value):
     return value
 
 
+# parse the query / clean data
 def parse_query(query):
     parsed_query_as_dict = query_grammar.parseString(query).asDict()
     get = parsed_query_as_dict.get
@@ -67,6 +68,7 @@ def parse_query(query):
     return [query1]
 
 
+# runs the raw query
 def run_query(query):
     parsed_query = parse_query(query)
     if len(parsed_query) == 1:
@@ -74,12 +76,15 @@ def run_query(query):
     return compound_query(parsed_query[0], parsed_query[1], parsed_query[2])
 
 
+# returns the result for the query when it is a compound query
 def compound_query(query1, compound, query2):
     final_result = []
     field1, op1, value1 = query1
     field2, op2, value2 = query2
 
     # Input validation
+    if op1 == "of" or op2 == "of":
+        return ["Error: 'of' operator cannot be used in compound queries"]
     if field1 not in int_fields + string_fields + bool_fields:
         return ["Error: Invalid field name '" + field1 + "'"]
     if field2 not in int_fields + string_fields + bool_fields:
@@ -92,8 +97,6 @@ def compound_query(query1, compound, query2):
         return ["Error: Field '" + field1 + "' requires a boolean value not '" + str(value1) + "'"]
     if field2 in bool_fields and not isinstance(value2, bool):
         return ["Error: Field '" + field2 + "' requires a boolean value not '" + str(value2) + "'"]
-    if op1 == "of" or op2 == "of":
-        return ["Error: 'of' operator cannot be used in compound queries"]
 
     if compound == "and":
         result_query_1 = db.where(filter=FieldFilter(field1, op1, value1)).stream()
@@ -123,9 +126,18 @@ def compound_query(query1, compound, query2):
     return final_result
 
 
+# returns the result from user query.
 def single_query(query):
     result = []
     field, op, value = query
+
+    # input validation different for "of".
+    if op == "of":
+        # run query to find the pokemon of interest and return the requested field value
+        query_result = db.where(filter=FieldFilter("name", "==", str(value))).stream()
+        for doc in query_result:
+            return [doc.get(field)]
+        return ["Error: Name '" + str(value) + "' is not in the dataset"]
 
     # Input validation
     if field not in int_fields + string_fields + bool_fields:
@@ -135,11 +147,7 @@ def single_query(query):
     if field in bool_fields and not isinstance(value, bool):
         return ["Error: Field '" + field + "' requires a boolean value not '" + str(value) + "'"]
 
-    if op == "of":
-        query_result = db.where(filter=FieldFilter("name", "==", value)).stream()
-        for doc in query_result:
-            return doc.get(field)
-
+    # run the query and return the resulting names of pokemon
     query_result = db.where(filter=FieldFilter(field, op, value)).stream()
     for doc in query_result:
         result.append(doc.get("name"))
@@ -173,9 +181,7 @@ while True:
 
     if len(results) == 0:
         print("No results found.")
-    elif results[0].startswith("Error"):
+    elif type(results[0]) == int or type(results[0]) == bool or results[0].startswith("Error"):
         print(results[0])
     else:
         print(", ".join(str(r) for r in results))
-
-    print("Enter query, or press q to quit: ")
