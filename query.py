@@ -155,10 +155,12 @@ def single_query(query):
 
 
 # TODO: help menu + initial prompt to user
-help_menu = """
+all_fields = int_fields + string_fields + bool_fields
+formatted_fields = ', '.join(f'"{f}"' if ' ' in f else f for f in all_fields)
+help_menu = f"""
 Help Menu:
 - Queries look like: <field> <operator> <value>
-- Fields: name, number, type1, type2, evolves_from, legendary, mythical, ability1, ability2, hidden_ability
+- Fields: {formatted_fields}
 - Operators: ==, !=, <, >
 - Compound queries supported: and, or
 - Type q to quit.
