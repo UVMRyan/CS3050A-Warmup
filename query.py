@@ -147,14 +147,23 @@ def single_query(query):
 
 
 # TODO: help menu + initial prompt to user
-help_menu = "example help menu"
+help_menu = """
+Help Menu:
+- Queries look like: <field> <operator> <value>
+- Fields: name, number, type1, type2, evolves_from, legendary, mythical, ability1, ability2, hidden_ability
+- Operators: ==, !=, <, >
+- Compound queries supported: and, or
+- Type q to quit.
+"""
 
-print("Enter query, or press q to quit: ")
+print("Enter query, press q to quit, or press help for help: ")
 while True:
     query_results = []
     raw_query = input("")
     if raw_query == "help":
         print(help_menu)
+        print("Enter query, or press q to quit, or press help for help: ")
+        continue
     if raw_query == "q":
         raw_query = input(">>> ").lstrip('>').strip()
     if raw_query == "q" or raw_query == "Q":
